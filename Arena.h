@@ -6,18 +6,18 @@
 
 class Arena {
 private:
-    int board[A_HEIGHT][A_WIDTH];
+    char board[A_HEIGHT][A_WIDTH];
 
 public:
     Arena();
 
-    bool isValidPosition(const int tetromino[4][4], int x, int y);
+    bool isValidPosition(const char tetromino[4][4], int x, int y);
 
-    void lockPiece(const int tetromino[4][4], int x, int y);
+    void lockPiece(const char tetromino[4][4], int x, int y);
 
     int clearLines();
 
-    int getCell(int y, int x) const;
+    char getCell(int y, int x) const;
 };
 
 #endif
