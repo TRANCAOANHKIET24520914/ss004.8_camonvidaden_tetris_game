@@ -5,9 +5,9 @@ Arena::Arena() {
     for (int i = 0; i < A_HEIGHT; i++) {
         for (int j = 0; j < A_WIDTH; j++) {
             if (i == A_HEIGHT - 1 || j == 0 || j == A_WIDTH - 1) {
-                board[i][j] = 1;
+                board[i][j] = '#';
             } else {
-                board[i][j] = 0;
+                board[i][j] = ' ';
             }
         }
     }
@@ -17,7 +17,7 @@ Arena::Arena() {
 bool Arena::isValidPosition(const int tetromino[4][4], int x, int y) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            if (tetromino[i][j] != 0) {
+            if (tetromino[i][j] != ' ') {
                 int px = x + j;
                 int py = y + i;
 
@@ -25,7 +25,7 @@ bool Arena::isValidPosition(const int tetromino[4][4], int x, int y) {
                     return false;
                 }
 
-                if (py >= 0 && board[py][px] != 0) {
+                if (py >= 0 && board[py][px] != ' ') {
                     return false;
                 }
             }
@@ -53,7 +53,7 @@ int Arena::clearLines() {
         bool isFull = true;
 
         for (int j = 1; j < A_WIDTH - 1; j++) {
-            if (board[i][j] == 0) {
+            if (board[i][j] == ' ') {
                 isFull = false;
                 break;
             }
@@ -69,7 +69,7 @@ int Arena::clearLines() {
             }
 
             for (int col = 1; col < A_WIDTH - 1; col++) {
-                board[0][col] = 0;
+                board[0][col] = ' ';
             }
 
             i++;
@@ -79,6 +79,6 @@ int Arena::clearLines() {
 }
 
 int Arena::getCell(int y, int x) const {
-    if (x < 0 || x >= A_WIDTH || y < 0 || y >= A_HEIGHT) return 1;
+    if (x < 0 || x >= A_WIDTH || y < 0 || y >= A_HEIGHT) return '#';
     return board[y][x];
 }
