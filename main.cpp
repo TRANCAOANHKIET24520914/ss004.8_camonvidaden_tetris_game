@@ -1,149 +1,90 @@
 #include <iostream>
 #include <conio.h>
 #include <windows.h>
+#include <ctime>
+#include "Arena.h"
+
 using namespace std;
 #define H 20
 #define W 15
-char board[H][W] = {};
-char blocks[][4][4] = {
-    {{' ', 'I', ' ', ' '},
-     {' ', 'I', ' ', ' '},
-     {' ', 'I', ' ', ' '},
-     {' ', 'I', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {'I', 'I', 'I', 'I'},
-     {' ', ' ', ' ', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', 'O', 'O', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {' ', 'T', ' ', ' '},
-     {'T', 'T', 'T', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {' ', 'S', 'S', ' '},
-     {'S', 'S', ' ', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {'Z', 'Z', ' ', ' '},
-     {' ', 'Z', 'Z', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {'J', ' ', ' ', ' '},
-     {'J', 'J', 'J', ' '},
-     {' ', ' ', ' ', ' '}},
-    {{' ', ' ', ' ', ' '},
-     {' ', ' ', 'L', ' '},
-     {'L', 'L', 'L', ' '},
-     {' ', ' ', ' ', ' '}}};
 
+Arena arena;
+
+char blocks[7][4][4] = {
+    {{' ', 'I', ' ', ' '}, {' ', 'I', ' ', ' '}, {' ', 'I', ' ', ' '}, {' ', 'I', ' ', ' '}}, // I
+    {{' ', ' ', ' ', ' '}, {' ', 'O', 'O', ' '}, {' ', 'O', 'O', ' '}, {' ', ' ', ' ', ' '}}, // O
+    {{' ', ' ', ' ', ' '}, {' ', 'T', ' ', ' '}, {'T', 'T', 'T', ' '}, {' ', ' ', ' ', ' '}}, // T
+    {{' ', ' ', ' ', ' '}, {' ', 'S', 'S', ' '}, {'S', 'S', ' ', ' '}, {' ', ' ', ' ', ' '}}, // S
+    {{' ', ' ', ' ', ' '}, {'Z', 'Z', ' ', ' '}, {' ', 'Z', 'Z', ' '}, {' ', ' ', ' ', ' '}}, // Z
+    {{' ', ' ', ' ', ' '}, {'J', ' ', ' ', ' '}, {'J', 'J', 'J', ' '}, {' ', ' ', ' ', ' '}}, // J
+    {{' ', ' ', ' ', ' '}, {' ', ' ', 'L', ' '}, {'L', 'L', 'L', ' '}, {' ', ' ', ' ', ' '}}  // L
+};
 int x = 4, y = 0, b = 1;
 void gotoxy(int x, int y)
 {
     COORD c = {x, y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 }
+
 void boardDelBlock()
 {
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
-            if (blocks[b][i][j] != ' ' && y + j < H)
-                board[y + i][x + j] = ' ';
+    // for (int i = 0 ; i < 4 ; i++)
+    //     for (int j = 0 ; j < 4 ; j++)
+    //         if (blocks[b][i][j] != ' ' && y+j < H)
+    //             board[y+i][x+j] = ' ';
 }
 void block2Board()
 {
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
-            if (blocks[b][i][j] != ' ')
-                board[y + i][x + j] = blocks[b][i][j];
+    arena.lockPiece(blocks[b], x, y);
 }
 void initBoard()
 {
-    for (int i = 0; i < H; i++)
-        for (int j = 0; j < W; j++)
-            if ((i == H - 1) || (j == 0) || (j == W - 1))
-                board[i][j] = '#';
-            else
-                board[i][j] = ' ';
 }
 void draw()
 {
     gotoxy(0, 0);
     for (int i = 0; i < H; i++, cout << endl)
         for (int j = 0; j < W; j++)
-            cout << board[i][j];
+        {
+            // 1. Lấy dữ liệu nền từ Arena
+            char pixel = arena.getCell(i, j);
+
+            // 2. Nếu vị trí này trùng với khối đang rơi, vẽ đè lên
+            if (i >= y && i < y + 4 && j >= x && j < x + 4)
+            {
+                if (blocks[b][i - y][j - x] != ' ')
+                {
+                    pixel = blocks[b][i - y][j - x];
+                }
+            }
+            cout << pixel;
+        }
 }
+
 bool canMove(int dx, int dy)
 {
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
-            if (blocks[b][i][j] != ' ')
-            {
-                int tx = x + j + dx;
-                int ty = y + i + dy;
-                if (tx < 1 || tx >= W - 1 || ty >= H - 1)
-                    return false;
-                if (board[ty][tx] != ' ')
-                    return false;
-            }
-    return true;
+    return arena.isValidPosition(blocks[b], x + dx, y + dy);
 }
+
 void removeLine()
 {
-    int j;
-    for (int i = H - 2; i > 0; i--)
-    {
-        for (j = 0; j < W - 1; j++)
-            if (board[i][j] == ' ')
-                break;
-        if (j == W - 1)
-        {
-            for (int ii = i; ii > 0; ii--)
-                for (int j = 0; j < W - 1; j++)
-                    board[ii][j] = board[ii - 1][j];
-            i++;
-            draw();
-            _sleep(200);
-        }
-    }
+    arena.clearLines();
 }
 
 int main()
 {
     srand(time(0));
     b = rand() % 7;
+
+    // Ẩn con trỏ chuột
+    CONSOLE_CURSOR_INFO Info;
+    Info.bVisible = FALSE;
+    Info.dwSize = 20;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &Info);
+
     system("cls");
     initBoard();
+
     while (1)
     {
         boardDelBlock();
@@ -159,19 +100,27 @@ int main()
             if (c == 'q')
                 break;
         }
+
         if (canMove(0, 1))
             y++;
         else
         {
             block2Board();
             removeLine();
-            x = 5;
+            x = 4;
             y = 0;
             b = rand() % 7;
+
+            if (!canMove(0, 0))
+            {
+                system("cls");
+                cout << "GAME OVER!";
+                break;
+            }
         }
-        block2Board();
+
         draw();
-        _sleep(200);
+        Sleep(200);
     }
     return 0;
 }
