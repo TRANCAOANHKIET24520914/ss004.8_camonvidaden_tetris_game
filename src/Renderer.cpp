@@ -45,7 +45,7 @@ void Renderer::render(const Arena& arena, const char currentBlock[4][4], int x, 
             cout << pixel;
         }
         
-        // 3. Vẽ UI (Điểm số) bên cạnh bảng chơi
+        // 3. Vẽ UI (Điểm số) bên cạnh bảng chơi.
         if (i == 2) cout << "  SCORE: " << score;
         else if (i == 4) cout << "  CONTROLS:";
         else if (i == 5) cout << "  A/D: Move";
@@ -64,4 +64,5 @@ void Renderer::renderGameOver(int finalScore) {
     cout << "=========================" << endl;
     cout << " Final Score: " << finalScore << endl;
     cout << "=========================" << endl;
+
 }
