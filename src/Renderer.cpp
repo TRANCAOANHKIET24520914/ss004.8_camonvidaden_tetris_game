@@ -16,7 +16,7 @@ void Renderer::draw(const Arena &arena,
 
     // an con tro chuot trong console
     cout << "\e[?25l";
-
+    
     // Đua con tro ve goc tren ben trai man hinh
     cout << "\e[H";
 
@@ -63,4 +63,6 @@ void Renderer::draw(const Arena &arena,
     cout << "Score: " << score << "\n\n";
     cout << "Controls: Arrow keys, X=Rotate, Space=Hard Drop\n";
     cout << "P=Pause, R=Restart, Q=Quit\n";
+    cout.flush();
 }
+
