@@ -66,14 +66,6 @@ void Game::handleInput(int key)     // Khong va cham thi moi cho di chuyen
         if (!arena.checkCollision(current, posX + 1, posY))
             posX++;
         break;
-    case 80: // Xuong - THAY ĐỔI: Rơi nhanh hơn (3 ô mỗi lần)
-        for (int i = 0; i < 3; i++) {  // Thay vì chỉ 1 ô, rơi 3 ô mỗi lần nhấn
-            if (!arena.checkCollision(current, posX, posY + 1))
-                posY++;
-            else
-                break;
-        }
-        break;
     case 72: // ⬆
     case 'x':
     case 'X': {   // Xoay khoi
